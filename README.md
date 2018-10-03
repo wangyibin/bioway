@@ -8,7 +8,7 @@ Collection of Python libraries to parse bioinformatics files.
 | Email   | <yibinwang96@outlook.com> |
 | License | [BSD](http://creativecommons.org/licenses/BSD/) |
 
-###Table of Contents
+### Table of Contents
 
 <!-- vim markdown-toc GFM -->
 
