@@ -12,8 +12,8 @@ Collection of Python libraries to parse bioinformatics files.
 
 <!-- vim markdown-toc GFM -->
 
-*[Introduction](#introduction)
-*[Installation](#installation)
+* [Introduction](#introduction)
+* [Installation](#installation)
 
 ## Introduction
 
