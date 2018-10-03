@@ -2,7 +2,7 @@
 
 Collection of Python libraries to parse bioinformatics files.
 
-| Imformations |
+| | |
 | --- | --- |
 | Authors | Yibin Wang ([wangyibin](http://github.com/wangyibin)) |
 | Email   | <yibinwang96@outlook.com> |
