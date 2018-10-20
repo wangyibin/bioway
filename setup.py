@@ -5,7 +5,7 @@ from setup_helper import SetupHelper
 
 
 
-name = "biowy"
+name = "bioway"
 classifiers = [
     'Development Status :: 0 - Beta',
     'Intended Audience :: Science/Research',
@@ -31,11 +31,11 @@ setup(
     package_dir={name: '.'},
     packages=[name] + ['.'.join((name,x)) for x in find_packages()],
     include_package_data=True,
-    package_data={"biowy.utils.data":["*.*"]},
+    package_data={"bioway.utils.data":["*.*"]},
     classifiers=classifiers,
 
     zip_safe=False,
-    url='http://github.come/wangyibin/biowy',
+    url='http://github.come/wangyibin/bioway',
     description='Python utility libraries on my bioinformatics study,',
     install_requires=['biopython','numpy','pysam','matplotlib'],
     )

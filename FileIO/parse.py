@@ -6,6 +6,7 @@ import os.path as op
 import os
 import sys
 
+from bioway.NumParse.ordnum import ordnum
 
 def checkfile(infile):
     """
@@ -46,20 +47,12 @@ def list_open(infile,**kwargs):
         while i < header:
             head = head + f.readline()
             i += 1
-        for j,line in enumerate(f):
+        for line in f:
             try:
                 olist.append(line.rstrip().split(sep)[column-1])
             except IndexError,e:
-                if column == 1:
-                    suffix = 'st'
-                elif column == 2:
-                    suffix = 'nd'
-                elif column == 3:
-                    suffix = 'rd'
-                else:
-                    suffix = 'th'
-                print('ColumnError:this file does not contain {0}{1} '
-                        'columns'.format(column,suffix))
+                print('ColumnError:this file does not contain {} '
+                        'columns'.format(ordnum(column)))
                 break
     
     return olist
