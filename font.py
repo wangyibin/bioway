@@ -14,10 +14,10 @@ class bcolor(object):
     UNDERLINE = '\033[4m'
     END = '\033[0m'
 
-fontcolor = dict(zip(
+FONTCOLORS = dict(zip(
     ('grey', 'red', 'green', 'yellow', 'blue', 'magenta','cyan', 'white',),
     ["0;%d" % x for x in range(30, 38)]))
-end = '\033[0m'
+END = '\033[0m'
 
 class ColoredText:
     """
@@ -41,8 +41,8 @@ class ColoredText:
         fmt_str = '\033[%sm%s'
 
         if self.attr:
-            ctext = fmt_str % (fontcolor[self.attr],self.text)
-        ctext += end
+            ctext = fmt_str % (FONTCOLORS[self.attr],self.text)
+        ctext += END
     
         return ctext or self.text
     
