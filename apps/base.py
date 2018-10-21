@@ -4,6 +4,7 @@
 """
 basic support for running library.
 """
+
 import logging
 import os
 import os.path as op
@@ -27,16 +28,27 @@ def kwargs_parse(parameters,kwargs):
                                     "Use the default parameter".format(pa))
     return parameters
 
+
+def ls(filename):
+    """
+    list directory except hided file.
+    """
+    filelist = os.listdir(filename)
+    for i in filelist:
+        if i[0] == '.':
+            filelist.remove(i)
+    return filelist
+
+
 def touch(filename):
     """
-    Create a new file, similar to linux command touch.
+    Create a new file and return bool, similar to linux command touch.
     >>>touch('test.txt')
-
     """
     path,filen = op.split(filename)
     if not path:
         path = "."
-    if filename in os.listdir(path):
+    if filen in os.listdir(path):
         logging.debug("File exist")
         return False
     else:
