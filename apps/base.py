@@ -14,7 +14,9 @@ import time
 
 def kwargs_parse(parameters,kwargs):
     """
-    Parse the kwargs.
+    Parse the kwargs, and return a new parameters dict.
+
+    >>>parameters = kwargs(parameters,kwargs)
     """
     if kwargs:
         for pa in kwargs:
@@ -24,6 +26,23 @@ def kwargs_parse(parameters,kwargs):
                 logging.warning("ParameterError:There is not {} in parameters."
                                     "Use the default parameter".format(pa))
     return parameters
+
+def touch(filename):
+    """
+    Create a new file, similar to linux command touch.
+    >>>touch('test.txt')
+
+    """
+    path,filen = op.split(filename)
+    if not path:
+        path = "."
+    if filename in os.listdir(path):
+        logging.debug("File exist")
+        return False
+    else:
+        f = open(filename,'w')
+        f.close()
+        return True
 
 
 def mkdir(dirname, overwrite=False):
