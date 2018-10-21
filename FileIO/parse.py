@@ -5,7 +5,7 @@
 import os.path as op
 import os
 import sys
-
+from bioway.apps.base import kwargs_parse
 from bioway.NumParse.ordnum import ordnum
 
 def checkfile(infile):
@@ -26,7 +26,7 @@ def list_open(infile,**kwargs):
     Usage:list_open(infile,column=1,sep='\\t',header=0)
     """
     parameters = {'column':1,'sep':'\t','header':0}
-    
+    """    
     if kwargs:
         for parameter in kwargs:
             if parameter in parameters:
@@ -34,7 +34,9 @@ def list_open(infile,**kwargs):
             else:
                 print('ParameterError:there is not {} in parameters. '
                         'Use the default parameter'.format(parameter))
-    
+    """
+    parameters = kwargs_parse(parameters,kwargs)
+
     column = int(parameters['column'])
     header = int(parameters['header'])
     sep = parameters['sep']

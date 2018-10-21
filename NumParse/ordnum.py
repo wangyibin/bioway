@@ -33,5 +33,5 @@ class ordnum:
     __repr__ = __str__
 
 
-if __name__ == "__main__":
+
     
