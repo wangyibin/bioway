@@ -4,14 +4,33 @@
 """
 basic support for running library.
 """
+from __future__ import print_function
 
+import glob
 import logging
 import os
 import os.path as op
 import shutil
+import subprocess
 import sys
 import time
 
+from bioway import __copyright__,__version__
+
+
+BIOWAYHELP = "bioway utility libraries v{0} [{1}]\n".format(__version__,__copyright__)
+
+
+def call(cmd,shell=True):
+    """
+    Modify the call function which shell change to True.
+    >>>call(cmd)
+    """
+    cmd = cmd.split(' ')
+    for i in cmd:
+        if not i:
+            cmd.remove(i)
+    subprocess.call(cmd,shell)
 
 def kwargs_parse(parameters,kwargs):
     """
@@ -31,13 +50,24 @@ def kwargs_parse(parameters,kwargs):
 
 def ls(filename):
     """
-    list directory except hided file.
+    List directory except hided file, and return a list.
+    >>>ls('.')
+        ['1.txt','2.txt','5.txt']
     """
     filelist = os.listdir(filename)
     for i in filelist:
         if i[0] == '.':
             filelist.remove(i)
     return filelist
+
+
+def pwd():
+    """
+    Return current work directory, similar to linux pwd.
+    >>>pwd()
+        '/public1/home/user/code/'
+    """
+    return os.getcwd()
 
 
 def touch(filename):
@@ -79,7 +109,7 @@ def splitall(path):
     
     Example:
     >>>splitall('/public/home/user/code')
-    ['public','home','user','code']
+        ['public','home','user','code']
     """
     allparts = []
     while True:
@@ -91,9 +121,13 @@ def splitall(path):
     return allparts
 
 
+def must_open(infile):
+    pass
+
 class ActionDispatcher (object):
     """
-
+    The action dispatch function.
+    Copy from jcvi(https//:github.com/tanghaibao/jcvi)
     """
     def __init__(self, actions):
 
@@ -123,4 +157,82 @@ class ActionDispatcher (object):
         else:
             args[-1] += " " + meta
 
+        help = "Usage:\n    python -m {0}\n\n\n".format('.'.join(args))
+        help += "Available {0}s:\n".format(meta)
+        max_action_len = max(len(action) for action, ah in self.actions)
+        for action, action_help in sorted(self.actions):
+            action = action.rjust(max_action_len +4)
+            help += " | ".join((action, action_help[0].upper() + 
+                                            action_help[1:])) +"\n"
 
+        help += "\n" + BIOWAYHELP
+
+        sys.stderr.write(help)
+        sys.exit(1)
+
+    def dispatch(self, globals):
+        from difflib import get_close_matches
+        meta = "ACTION"
+        if len(sys.argv) == 1:
+            sys.print_help()
+
+        action = sys.argv[1]
+
+        if not action in self.vaild_actions:
+            print("[error] {0} not a valid {1}\n".format(action, meta),
+                    file=sys.stderr)
+            alt = get_close_matches(action, self.valid_actions)
+            print("Did you mean one of these?\n\t{0}\n".
+                    format(", ".join(alt)),file=sys.stderr)
+            self.print_help
+
+        globals[action](sys.argv[2:])
+
+ 
+def get_module_docstring(filepath):
+    """
+    
+    """
+    co = compile(open(filepath).read(), filepath, 'exec')
+    if co.co_consts and isinstance(co.co_consts[0], basestring):
+        docstring = co.co_consts[0]
+    else:
+        docstring = None
+    return docstring
+
+
+def dmain(mainfile, type='action'):
+    """
+    The main file excute include.
+    Copy from jcvi(https//:github.com/tanghaibao/jcvi)
+    """
+    cwd = op.dirname(mainfile)
+    pyscripts = [x for x in glob.glob(op.join(cwd, '*', '__main__.py'))] \
+                    if type == "module" \
+                    else glob.glob(op.join(cwd, "*.py"))
+
+    actions = []
+    for ps in sorted(pyscripts):
+        action = op.basename(op.dirname(ps)) \
+                if type == 'module' \
+                else op.basename(ps).replace(".py", "")
+        if action[0] == "_":
+            continue
+        pd = get_module_docstring(ps)
+        action_help = [x.rstrip(":.,\n") for x in pd.splitlines(True) 
+                if len(x.strip()) > 10 and x[0] != '%'][0] \
+                if pd else "No docstring found"
+        actions.append((action, action_help))
+        
+    a = ActionDispatcher(actions)
+    a.print_help()
+
+
+class PWD:
+    def __init__(self):
+        print(os.getcwd())
+
+
+
+if __name__ == "__main__":
+    pass
