@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+"""
+The format of the text, such as font color.
+"""
 
 class bcolor(object):
     PURPLE = '\033[95m'
