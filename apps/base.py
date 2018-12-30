@@ -23,8 +23,33 @@ BIOWAYHELP = "bioway utility libraries v{0} [{1}]\n".format(__version__,__copyri
 
 def main():
     actions = (
-        ("ls","list directory")
-    )
+            ('ls', 'list the file'),
+            ('call','call jobs')
+            )
+    p = ActionDispatcher(actions)
+    p.dispatch(globals())
+
+
+def dmain(mainfile, type="action"):
+    cwd = op.dirname(mainfile)
+    pyscripts = [x for x in glob(op.join(cwd, "*", '__main__py'))] \
+            if type == "module" \
+            else glob(op.join(cwd, "*.py"))
+    actions = []
+    for ps in sorted(pyscripts):
+        action = op.basename(op.dirname(ps)) \
+                if type == 'module'\
+                else op.basename(ps).replace(".py", "")
+        if action[0] == "_":
+            continue
+        pd = get_module_docstring(ps)
+        action_help = [x.rstrip(":.,\n") for x in pd.splitlines(True) \
+                if len(x.strip()) > 10 and x[0] != "%"][0] \
+                if pd else "no docstring found"
+        actions.append((action,action_help))
+    
+    a = ActionDispatcher(actions)
+    a.print_help()
 
 
 def call(cmd,shell=True):
@@ -49,8 +74,9 @@ def kwargs_parse(parameters,kwargs):
             if pa in parameters:
                 parameters[pa] = kwargs[pa]
             else:
-                logging.warning("ParameterError:There is not {} in parameters."
-                                    "Use the default parameter".format(pa))
+                logging.warning("ParameterError:There is not {} in \
+                                parameters."
+                                "Use the default parameter".format(pa))
     return parameters
 
 
@@ -127,9 +153,15 @@ def splitall(path):
     return allparts
 
 
-def must_open(infile):
-    pass
-
+def must_open(filename,mode='r'):
+    """
+    Return filehandle
+    Deal multifiletype such as .gz .bz2
+    """
+    if filename.endswith('.gz'):
+        fp = gzip.open(filename, mode)
+    elif filename.endswith('.bz2'):
+        cmd ="" 
 class ActionDispatcher (object):
     """
     The action dispatch function.
@@ -168,8 +200,7 @@ class ActionDispatcher (object):
         max_action_len = max(len(action) for action, ah in self.actions)
         for action, action_help in sorted(self.actions):
             action = action.rjust(max_action_len +4)
-            help += " | ".join((action, action_help[0].upper() + 
-                                            action_help[1:])) +"\n"
+            help += " | ".join((action, action_help.capitalize() + "\n"))
 
         help += "\n" + BIOWAYHELP
 
@@ -180,16 +211,16 @@ class ActionDispatcher (object):
         from difflib import get_close_matches
         meta = "ACTION"
         if len(sys.argv) == 1:
-            sys.print_help()
+            self.print_help()
 
         action = sys.argv[1]
 
-        if not action in self.vaild_actions:
+        if not action in self.valid_actions:
             print("[error] {0} not a valid {1}\n".format(action, meta),
                     file=sys.stderr)
             alt = get_close_matches(action, self.valid_actions)
             print("Did you mean one of these?\n\t{0}\n".
-                    format(", ".join(alt)),file=sys.stderr)
+                    format(", ".join(alt)), file=sys.stderr)
             self.print_help
 
         globals[action](sys.argv[2:])
@@ -234,10 +265,39 @@ def dmain(mainfile, type='action'):
     a.print_help()
 
 
+
+
 class PWD:
     def __init__(self):
         print(os.getcwd())
 
+def key_parse(item):
+    """
+    parse a string which is key=value to dict.
+    """
+    d = {}
+
+def fuzzyfinder(user_input,collection):
+    """
+    fuzzzy matching, to obtain a fuzzy matched list.
+    >>>collection = [
+                    "user_name",
+                    "api_user",
+                    "school",
+                    "email"
+                    ]
+    >>>fuzzyfinder("user",collection)
+    ["user_name","api_user"]
+    """
+    suggestions = []
+    pattern = ".*?".join(user_input)
+    regex = re.compile(pattern)
+    for item in collection:
+        match = regex.search(item)
+        if match:
+            suggestions.append((len(match.group()),match.start(),item))
+    
+    return [x for _, _, x in sorted(suggestions)]
 
 
 if __name__ == "__main__":

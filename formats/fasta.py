@@ -3,7 +3,7 @@
 
 
 """
-fasta.
+The fasta file parse libraries.
 """
 
 
@@ -11,14 +11,27 @@ import os
 import sys
 
 from Bio import SeqIO
+from bioway.apps.base import ActionDispatcher
+
+def main():
+    actions = (
+            ('test','test print 124')
+            )
+    p = ActionDispatcher(actions)
+    p.dispatch(globals())
+
+
 def parsefasta(infasta,item='record'):
     """
     
     """
     f = SeqIO.parse(open(infasta),'fasta')
     return f
-
-
+def info(infasta):
+    """
+    Stat the fasta.
+    """
+    print(212)
 
 def gen_fasize(infasta):
     """
@@ -51,3 +64,10 @@ def fasize(infasta):
 
 class OutPut:
     pass
+
+def test():
+    print(123)
+
+
+if __name__ == "__main__":
+    main()
