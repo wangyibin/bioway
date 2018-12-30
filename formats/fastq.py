@@ -2,19 +2,19 @@
 # -*- coding:utf-8 -*-
 
 """
-fastq
+The fastq file parse libraries.
 """
 import os
 import sys
-
+import gzip
 
 class FastqRecord (object):
-    def __init__(self):
-        pass
+    def __init__(self,fastqfile):
+        self.fq = fastqfile
     
-    def record(self,fq):
-        self.fq = fq
-        with open(self.fq) as f:
+    def record(self):
+        print self.fq
+        with gzip.open(self.fq,'r') as f:
             for line in f:
                 self.r = line + next(f) + next(f) + next(f)
                 yield self.r
@@ -26,5 +26,4 @@ def test(fq):
         print(line)
 
 if __name__ == "__main__":
-    fq = sys.argv[1]
-    test(fq)
+    pass
