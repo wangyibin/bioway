@@ -10,6 +10,7 @@ import glob
 import logging
 import os
 import os.path as op
+import re
 import shutil
 import subprocess
 import sys
@@ -19,6 +20,11 @@ from bioway import __copyright__,__version__
 
 
 BIOWAYHELP = "bioway utility libraries v{0} [{1}]\n".format(__version__,__copyright__)
+
+def main():
+    actions = (
+        ("ls","list directory")
+    )
 
 
 def call(cmd,shell=True):
@@ -235,4 +241,4 @@ class PWD:
 
 
 if __name__ == "__main__":
-    pass
+    main()
