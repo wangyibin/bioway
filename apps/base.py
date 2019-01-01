@@ -16,6 +16,8 @@ import subprocess
 import sys
 import time
 
+from optparse import OptionParser as OptionP, OptionGroup, SUPPRESS_HELP
+
 from bioway import __copyright__,__version__
 
 
@@ -24,7 +26,8 @@ BIOWAYHELP = "bioway utility libraries v{0} [{1}]\n".format(__version__,__copyri
 def main():
     actions = (
             ('ls', 'list the file'),
-            ('call','call jobs')
+            ('call', 'call jobs'),
+            ('touch', 'touch file same as linux touch')
             )
     p = ActionDispatcher(actions)
     p.dispatch(globals())
@@ -102,11 +105,18 @@ def pwd():
     return os.getcwd()
 
 
-def touch(filename):
+def touch(args):
     """
     Create a new file and return bool, similar to linux command touch.
     >>>touch('test.txt')
     """
+    p = OptionParser(touch.__doc__)
+    opts, args = p.parse_args(args)
+
+    if len(args) != 1:
+        sys.exit(not p.print_help())
+    filename = args[0]
+    print(args)
     path,filen = op.split(filename)
     if not path:
         path = "."
@@ -225,7 +235,57 @@ class ActionDispatcher (object):
 
         globals[action](sys.argv[2:])
 
- 
+
+class OptionParser (OptionP):
+    """
+    OptionParser modify from https://githup.com/tanghaibao/jcvi.git
+    """
+    def __init__ (self, doc):
+        OptionP.__init__(self, doc,epilog=BIOWAYHELP)
+        pass
+    def parse_args(self, args=None):
+        dests = set()
+        ol = []
+        for g in [self] + self.option_groups:
+            ol += g.option_list
+        for o in ol:
+            if o.dest in dests:
+                continue
+            self.add_help_from_choices(o)
+            dests.add(o.dest)
+
+        return OptionP.parse_args(self, args)
+
+    def add_help_from_choices(self, o):
+        if o.help == SUPPRESS_HELP:
+            return
+
+        default_tag = "%default"
+        assert o.help, "Option {0} do not have help string".format(o)
+        help_pf = o.help.capitalize()
+        if "[" in help_pf:
+            help_pf = help_pf.rsplit("[",1)[0]
+        help_pf = help_pf.strip()
+
+        if o.type == "choice":
+            if o.default is None:
+                default_tag = "guess"
+            ctext = "|".join(sorted(str(x) for x in o.choices))
+            if len(ctext) > 100:
+                ctext = ctext[:100] + "..."
+            choice_text = "must be one of {0}".format(ctext)
+            o.help = "{0}, {1} [default: {2}]".format(help_pf,
+                                    choice_text,default_tag)
+        else:
+            o.help = help_pf
+            if o.default is None:
+                default_tag = "disabled"
+            if o.get_opt_string() not in ("--help", "--version") \
+                    and o.action != "store_false":
+                o.help += " [default:{0}".format(default_tag)
+
+
+
 def get_module_docstring(filepath):
     """
     
