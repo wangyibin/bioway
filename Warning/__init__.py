@@ -2,8 +2,9 @@
 # -*- coding:utf-8 -*-
 
 
-class ColumnError:
+class ColumnError(Exception):
     """
-    Column
+    Raise a column number error when there is no this column.
     """
     pass 
+
