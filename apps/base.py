@@ -17,6 +17,7 @@ import sys
 import time
 
 from optparse import OptionParser as OptionP, OptionGroup, SUPPRESS_HELP
+from string import Template
 
 from bioway import __copyright__,__version__
 
@@ -325,6 +326,12 @@ def dmain(mainfile, type='action'):
     a.print_help()
 
 
+class CustomerTemplate(Template):
+    delimiter = "%"
+
+def usage_print(doc, s):
+    t = CustomerTemplate(doc)
+    return t.substitute(prog=s)
 
 
 class PWD:
