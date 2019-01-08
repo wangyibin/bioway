@@ -330,8 +330,22 @@ class CustomerTemplate(Template):
     delimiter = "%"
 
 def printu(doc):
+    """
+    To print an usage text.
+    >>> doc = "%prog test"
+    >>> printu(doc)
+    #------------------------------------------------#
+    test_printu.py
 
-    t = CustomerTemplate(doc)
+    this is test file for function printu.
+
+    #------------------------------------------------#
+
+    :param doc: string
+    :print:an usage text.
+    """
+    template = "#{0}#{1}\n#{2}#".format("-"*48, doc, "-"*48)
+    t = CustomerTemplate(template)
     print(t.substitute(prog=sys.argv[0]))
 
 
