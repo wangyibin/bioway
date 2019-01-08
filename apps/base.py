@@ -329,9 +329,10 @@ def dmain(mainfile, type='action'):
 class CustomerTemplate(Template):
     delimiter = "%"
 
-def usage_print(doc, s):
+def printu(doc):
+
     t = CustomerTemplate(doc)
-    return t.substitute(prog=s)
+    print(t.substitute(prog=sys.argv[0]))
 
 
 class PWD:
