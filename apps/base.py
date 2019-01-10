@@ -14,6 +14,7 @@ import re
 import shutil
 import subprocess
 import sys
+import six
 import time
 
 from optparse import OptionParser as OptionP, OptionGroup, SUPPRESS_HELP
@@ -292,7 +293,7 @@ def get_module_docstring(filepath):
     
     """
     co = compile(open(filepath).read(), filepath, 'exec')
-    if co.co_consts and isinstance(co.co_consts[0], basestring):
+    if co.co_consts and isinstance(co.co_consts[0], six.string_types):
         docstring = co.co_consts[0]
     else:
         docstring = None
@@ -344,7 +345,7 @@ def printu(doc):
     :param doc: string
     :print:an usage text.
     """
-    template = "#{0}#{1}\n#{2}#".format("-"*48, doc, "-"*48)
+    template = "#{0}#{1}\n#{2}#".format("-"*77, doc, "-"*77)
     t = CustomerTemplate(template)
     print(t.substitute(prog=sys.argv[0]))
 
