@@ -167,13 +167,34 @@ def splitall(path):
 
 def must_open(filename,mode='r'):
     """
-    Return filehandle
-    Deal multifiletype such as .gz .bz2
+    Return file handle
+    Deal multi-file type such as .gz .bz2
     """
     if filename.endswith('.gz'):
         fp = gzip.open(filename, mode)
     elif filename.endswith('.bz2'):
-        cmd ="" 
+        import bz2
+        fp = bz2.open(filename,mode)
+    else:
+        fp = open(filename, mode)
+
+    return fp
+
+
+def debug():
+    """
+    Configure logging to debug level and format
+    :return: None
+    """
+    from bioway.apps.font import magenta, yellow
+
+    formats = yellow("%(asctime)s - %(levelname)s - %(filename)s"
+                     " [%(module)s]") + magenta("%(message)s")
+    logging.basicConfig(level=logging.DEBUG, format=formats,
+                        datafmt="%H:%M:%S")
+debug()
+
+
 class ActionDispatcher (object):
     """
     The action dispatch function.
@@ -345,6 +366,10 @@ def printu(doc):
     :param doc: string
     :print:an usage text.
     """
+    if not doc.startswith("\n"):
+        doc = "\n" + doc
+    if not doc.endswith("\n"):
+        doc = doc + "\n"
     template = "#{0}#{1}\n#{2}#".format("-"*77, doc, "-"*77)
     t = CustomerTemplate(template)
     print(t.substitute(prog=sys.argv[0]))
@@ -362,7 +387,7 @@ def key_parse(item):
 
 def fuzzyfinder(user_input,collection):
     """
-    fuzzzy matching, to obtain a fuzzy matched list.
+    fuzzy matching, to obtain a fuzzy matched list.
     >>>collection = [
                     "user_name",
                     "api_user",
