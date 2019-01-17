@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-The librays of bioinformatics format parse.
+The libraries of bioinformatics format parse.
 """
 
 from bioway.apps.base import dmain

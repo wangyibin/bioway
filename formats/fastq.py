@@ -13,7 +13,6 @@ class FastqRecord (object):
         self.fq = fastqfile
     
     def record(self):
-        print self.fq
         with gzip.open(self.fq,'r') as f:
             for line in f:
                 self.r = line + next(f) + next(f) + next(f)

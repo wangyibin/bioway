@@ -17,6 +17,7 @@ import sys
 import six
 import time
 
+
 from optparse import OptionParser as OptionP, OptionGroup, SUPPRESS_HELP
 from string import Template
 
@@ -68,21 +69,27 @@ def call(cmd,shell=True):
             cmd.remove(i)
     subprocess.call(cmd,shell)
 
-def kwargs_parse(parameters,kwargs):
+def kwargs_parse(kwargs, param):
     """
     Parse the kwargs, and return a new parameters dict.
+    :param kwargs: kwargs
+    :param default_param:
+    :return: dict of kwargs
 
-    >>>parameters = kwargs(parameters,kwargs)
+    >>>parameters = kwargs_parse(kwargs, param)
     """
+    from difflib import get_close_matches
     if kwargs:
         for pa in kwargs:
-            if pa in parameters:
-                parameters[pa] = kwargs[pa]
+            if pa in param:
+                param[pa] = kwargs[pa]
             else:
-                logging.warning("ParameterError:There is not {} in \
-                                parameters."
-                                "Use the default parameter".format(pa))
-    return parameters
+                similar_param = get_close_matches(pa, param)
+                logging.warning("ParameterError:There is not `{0}` in parameters. "
+                                "Maybe `{1}` is your choice. "
+                                "Use the default parameter".format(pa, similar_param))
+
+    return param
 
 
 def ls(filename):
@@ -170,6 +177,7 @@ def must_open(filename,mode='r'):
     Return file handle
     Deal multi-file type such as .gz .bz2
     """
+
     if filename.endswith('.gz'):
         fp = gzip.open(filename, mode)
     elif filename.endswith('.bz2'):
@@ -181,6 +189,7 @@ def must_open(filename,mode='r'):
     return fp
 
 
+
 def debug():
     """
     Configure logging to debug level and format
@@ -188,10 +197,10 @@ def debug():
     """
     from bioway.apps.font import magenta, yellow
 
-    formats = yellow("%(asctime)s - %(levelname)s - %(filename)s"
-                     " [%(module)s]") + magenta("%(message)s")
+    formats = yellow("%(asctime)s %(levelname)s"
+                     " [%(module)s]") + magenta(" %(message)s")
     logging.basicConfig(level=logging.DEBUG, format=formats,
-                        datafmt="%H:%M:%S")
+                        datefmt="%Y-%m-%d %H:%M:%S")
 debug()
 
 

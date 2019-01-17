@@ -6,8 +6,9 @@
 class VCFParse(object):
 
     def __init__(self):
-    
-    def genlist()
+        pass
+    def genlist():
+        pass
 
 
 

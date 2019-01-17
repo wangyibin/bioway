@@ -11,7 +11,41 @@ import os
 import os.path as op
 import sys
 
-from scipy import stats
+#from scipy import stats
+
+
+class OrdNum(object):
+    """
+    Return the corresponding ordinal number of a number.
+    Such as 21>21st; 11>11th; 3>3rd.
+    """
+
+    def __init__(self, num):
+        self.num = str(num)
+
+    def __str__(self):
+
+        if not self.num.isnumeric():
+            print('Please input a number!')
+
+        last2bits = int(str(self.num)[-2:])
+        if (last2bits < 10) or (last2bits > 20):
+            if last2bits % 10 == 1:
+                suffix = 'st'
+            elif last2bits % 10 == 2:
+                suffix = 'nd'
+            elif last2bits % 10 == 3:
+                suffix = 'rd'
+            else:
+                suffix = 'th'
+        else:
+            suffix = 'th'
+
+        ordnum = '%s%s' % (self.num, suffix)
+
+        return ordnum
+
+    __repr__ = __str__
 
 def get_mode(numlist):
     """
