@@ -7,15 +7,19 @@ The fasta file parse libraries.
 """
 
 
+
 import os
 import sys
 
-from Bio import SeqIO
-from bioway.apps.base import ActionDispatcher
+from Bio import SeqIO, Seq
+from bioway.apps.base import ActionDispatcher, OptionParser
+
+
 
 def main():
     actions = (
-            ('test','test print 124')
+            ('test','test print 124'),
+            ("reverse_complement", "reverse_complement sequences from a file to a new file")
             )
     p = ActionDispatcher(actions)
     p.dispatch(globals())
@@ -60,6 +64,26 @@ def fasize(infasta):
    # for i in gen_fasize(infasta):
     #    fasize_dict[i[0]] = i[1]
     return fasize_dict
+
+def reverse_complement(args):
+    """
+    reverse complement complement_fasta reverse_fasta .
+
+    """
+    p = OptionParser(reverse_complement.__doc__)
+    opts, args = p.parse_args(args)
+
+    if len(args) < 2:
+        sys.exit(not p.print_help())
+
+    complement_fasta, reverse_fasta = args
+
+    with open(complement_fasta) as fa_in:
+        with open(reverse_fasta, 'w') as fa_out:
+            fa = SeqIO.parse(fa_in,"fasta")
+            for record in fa:
+                record.seq = Seq.reverse_complement(record.seq)
+                SeqIO.write(record, fa_out, "fasta")
 
 
 class OutPut:
