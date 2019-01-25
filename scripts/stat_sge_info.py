@@ -6,6 +6,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+
+"""
+A script for stat sge used info.
+"""
+
 import os
 import sys
 
